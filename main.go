@@ -1,6 +1,7 @@
 package main
 
 import (
+	"RestfullApi_Mqtt/msgmqtt"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -57,12 +58,19 @@ func ControDevice(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(Device)
 	mac := Device.Mac
 	fmt.Printf("Mac device:%s\t-Trạng thái: %s \n", mac, stt)
-
+	if stt == "1" {
+		fmt.Println("Bật đèn")
+		msgmqtt.PublishData(mac, "1")
+	} else if stt == "0" {
+		fmt.Println("Tắt đèn")
+		msgmqtt.PublishData(mac, "0")
+	}
+	fmt.Println("------------------------------------------")
 }
 
 func main() {
 	fmt.Println("====> START MAIN <=====")
-	//msgmqtt.Initmqtt()
+	msgmqtt.MqttBegin()
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homeLink)
 	router.HandleFunc("/add-device", AddDevice).Methods("POST")
