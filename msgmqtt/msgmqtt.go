@@ -28,20 +28,20 @@ const CmsPassBi = ""
 var idBox = ""
 
 // CmsTopicIn : Server to Box
-var CmsTopicIn = "v1/devices/" + idBox + "/telemetry"
+var CmsTopicIn = "/v1/devices/NTQ/" + idBox + "/telemetry"
 
 // CmsTopicOut : Box to Server
-var CmsTopicOut = "v1/devices/" + idBox + "/request/+"
+var CmsTopicOut = "/v1/devices/NTQ/" + idBox + "/request/"
 
 //PublishData : Function
 func PublishData(idBox string, payload string) { // idBox : Mac of device
-	CmsTopicIn = "v1/devices/" + idBox + "/telemetry"
-	CmsTopicOut = "v1/devices/" + idBox + "/request/+"
+	CmsTopicIn = "/v1/devices/NTQ/" + idBox + "/telemetry"
+	CmsTopicOut = "/v1/devices/NTQ/" + idBox + "/request/"
 	fmt.Println("idBox: " + idBox)
 	fmt.Println("TOPIC IN :" + CmsTopicIn)
 	fmt.Println("TOPIC OUT :" + CmsTopicOut)
 	// If Test device with static Topic
-	CmsTopicIn = "TNQ_MQTT"
+	//CmsTopicIn = "TNQ_MQTT"
 	fmt.Println("Test device with static Topic")
 	fmt.Println("TOPIC IN :" + CmsTopicIn)
 	//var payload string = "{" + "\"ip_private\":" + "\"" + ip + "\"" +"," + "\"box_id\":" + "\"" + id_cam + "\"" + "}"
