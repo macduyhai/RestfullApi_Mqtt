@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -64,6 +65,13 @@ func VerifyToken(tokenString string) (tokenstr string, err error) {
 }
 
 func homeLink(w http.ResponseWriter, r *http.Request) {
+	reqBody, err := ioutil.ReadAll(r.Body)
+	fmt.Println(string(reqBody))
+	if err != nil {
+		fmt.Fprintf(w, "Post form not true.! ")
+	} else {
+		// fmt.Fprintf(w, `{"error_code":10000}`)
+	}
 	fmt.Fprintf(w, "Welcome IOT!")
 }
 
@@ -80,6 +88,83 @@ func DeleteDevice(w http.ResponseWriter, r *http.Request) {
 
 }
 func GetSttDevice(w http.ResponseWriter, r *http.Request) {
+
+}
+func I2SSample(w http.ResponseWriter, r *http.Request) {
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprintf(w, "Post form not true.! Control device not support")
+	} else {
+		fmt.Fprintf(w, `{"error_code":10000}`)
+	}
+	//fmt.Println(string(reqBody))
+
+	var _, err_file = os.Stat("i2s.raw")
+
+	// create file if not exists
+	if os.IsNotExist(err_file) {
+		// open output file
+		fo, err := os.Create("i2s.raw")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Tao file")
+		// close fo on exit and check for its returned error
+		defer func() {
+			if err := fo.Close(); err != nil {
+				panic(err)
+			}
+		}()
+	}
+	var file, err_b = os.OpenFile("i2s.raw", os.O_RDWR|os.O_APPEND, 0777)
+	if err_b != nil {
+		////return
+		fmt.Printf(" Write_log %v\n", err_b)
+	}
+	defer file.Close()
+	_, err = file.Write(reqBody)
+	if err != nil {
+		fmt.Printf(" Write_log %v\n", err)
+		////return
+	}
+	// save changes
+	err = file.Sync()
+	if err != nil {
+		fmt.Printf(" Write_log %v", err)
+		////return
+	}
+	// err1 := ioutil.WriteFile("i2s.raw", reqBody, 0777) //[]byte(string(reqBody))
+	// if err != nil {
+	// 	log.Fatal(err1)
+	// } else {
+	// 	fmt.Println("Ghi thêm file")
+
+	// }
+
+}
+func ADCSample(w http.ResponseWriter, r *http.Request) {
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprintf(w, "Post form not true.! Control device not support")
+	} else {
+		fmt.Fprintf(w, `{"error_code":10000}`)
+	}
+	fmt.Println(string(reqBody))
+	// open output file
+	fo, err := os.Create("adc.raw")
+	if err != nil {
+		panic(err)
+	}
+	// close fo on exit and check for its returned error
+	defer func() {
+		if err := fo.Close(); err != nil {
+			panic(err)
+		}
+	}()
+	err1 := ioutil.WriteFile("adc.raw", []byte(string(reqBody)), 0644)
+	if err != nil {
+		log.Fatal(err1)
+	}
 
 }
 
@@ -128,7 +213,7 @@ func ControDevice(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	fmt.Println("====> START MAIN <=====")
-	msgmqtt.MqttBegin()
+	// msgmqtt.MqttBegin()
 	// time.Sleep(10)
 	// s, _ := CreateJWT(msg)
 	// fmt.Println(s)
@@ -147,5 +232,8 @@ func main() {
 	router.HandleFunc("/add-device", AddDevice).Methods("POST")
 	router.HandleFunc("/control-device/{stt}", ControDevice).Methods("POST")
 	router.HandleFunc("/get-list-device", GetlistDevice).Methods("GET")
+	router.HandleFunc("/i2s_samples", I2SSample).Methods("POST")
+	router.HandleFunc("/adc_samples", ADCSample).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8888", router))
+
 }

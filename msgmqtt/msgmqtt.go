@@ -1,8 +1,8 @@
 package msgmqtt
 
 import (
-	"beetai/box"
-	"beetai/file"
+	"beetai_cloud_config_json/box"
+	"beetai_cloud_config_json/file"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -16,7 +16,8 @@ import (
 var MqttCmsBi mqtt.Client
 
 // CmsHostBi : host MQTT
-const CmsHostBi string = "tcp://broker.hivemq.com:1883"
+// const CmsHostBi string = "tcp://broker.hivemq.com:1883"
+const CmsHostBi string = "tcp://vuaop.com:1883"
 
 // CmsAccessTokenBi : User
 const CmsAccessTokenBi = ""
@@ -37,16 +38,16 @@ var CmsTopicOut = "/v1/devices/NTQ/" + idBox + "/request/"
 func PublishData(idBox string, payload string) { // idBox : Mac of device
 	CmsTopicIn = "/v1/devices/NTQ/" + idBox + "/telemetry"
 	CmsTopicOut = "/v1/devices/NTQ/" + idBox + "/request/"
-	fmt.Println("idBox: " + idBox)
+	// fmt.Println("idBox: " + idBox)
 	fmt.Println("TOPIC IN :" + CmsTopicIn)
-	fmt.Println("TOPIC OUT :" + CmsTopicOut)
+	// fmt.Println("TOPIC OUT :" + CmsTopicOut)
 	// If Test device with static Topic
 	//CmsTopicIn = "TNQ_MQTT"
-	fmt.Println("Test device with static Topic")
-	fmt.Println("TOPIC IN :" + CmsTopicIn)
+	// fmt.Println("Test device with static Topic")
+	// fmt.Println("TOPIC IN :" + CmsTopicIn)
 	//var payload string = "{" + "\"ip_private\":" + "\"" + ip + "\"" +"," + "\"box_id\":" + "\"" + id_cam + "\"" + "}"
 
-	fmt.Printf("Payload = %v\n\n", payload)
+	fmt.Printf("Payload = %v\n", payload)
 	Token1 := MqttCmsBi.Publish(CmsTopicIn, 1, false, payload)
 	if Token1.Wait() && Token1.Error() != nil {
 		fmt.Printf("Error Publish message : %v\n", Token1.Error())
@@ -72,7 +73,7 @@ func MqttBegin() {
 		fmt.Println("MQTT CMS  Connected")
 		MqttCmsBi.Subscribe(CmsTopicOut, 0, MqttMessageHandler)
 	} else {
-		fmt.Println("MQTT CMS  cant not Connected")
+		fmt.Println("MQTT CMS  cant not Connected 1234")
 		fmt.Printf("Loi CMS  : %v \n", Token1.Error())
 		fmt.Println("-------------------")
 	}
